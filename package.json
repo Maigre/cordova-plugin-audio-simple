@@ -1,0 +1,25 @@
+{
+  "name": "cordova-plugin-exoplayer-simple",
+  "version": "0.1.1",
+  "description": "Cordova plugin: AndroidX Media3 (ExoPlayer) wrapper with a Howler-compatible JS surface, hosted in a MediaSessionService for background-reliable playback. Android only.",
+  "cordova": {
+    "id": "cordova-plugin-exoplayer-simple",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "exoplayer",
+    "media3",
+    "audio",
+    "background-audio"
+  ],
+  "author": "maigre <thomas@37m.gr>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maigre/cordova-plugin-exoplayer-simple.git"
+  }
+}

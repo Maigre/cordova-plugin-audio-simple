@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exoplayer_channel_name">Flanerie ExoPlayer</string>
+    <string name="exoplayer_channel_description">Service de lecture audio (ExoPlayer)</string>
+    <string name="exoplayer_notification_title">Flanerie</string>
+    <string name="exoplayer_notification_text">Lecture audio</string>
+</resources>

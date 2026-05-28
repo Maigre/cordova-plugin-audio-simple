@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-exoplayer-simple" version="0.1.1"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>ExoPlayerSimple</name>
+    <description>AndroidX Media3 (ExoPlayer) wrapper with a Howler-compatible JS API surface, hosted in a MediaSessionService for background-reliable playback on Android.</description>
+    <author email="thomas@37m.gr" href="https://github.com/Maigre">maigre</author>
+    <license>MIT</license>
+
+    <js-module name="ExoPlayerSimple" src="www/ExoPlayerSimple.js">
+        <clobbers target="cordova.plugins.exoplayer"/>
+    </js-module>
+
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="ExoPlayer">
+                <param name="android-package" value="com.maigre.cordova.plugins.exoplayer.ExoPlayerPlugin"/>
+            </feature>
+        </config-file>
+
+        <!-- Foreground service for background-reliable Media3 playback.
+             FOREGROUND_SERVICE_MEDIA_PLAYBACK is the required runtime permission since
+             Android 14 (API 34). FOREGROUND_SERVICE is required since API 28.
+             Coexists with cordova-plugin-audiofocus's AudioFocusService — both run as
+             FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK with distinct notification IDs
+             (audiofocus: 7374, exoplayer: 7375). -->
+        <config-file parent="/manifest" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+            <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+        </config-file>
+
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <service
+                android:name="com.maigre.cordova.plugins.exoplayer.ExoPlayerService"
+                android:foregroundServiceType="mediaPlayback"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="androidx.media3.session.MediaSessionService" />
+                </intent-filter>
+            </service>
+        </config-file>
+
+        <source-file src="src/android/ExoPlayerPlugin.java"  target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
+        <source-file src="src/android/ExoPlayerInstance.java" target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
+        <source-file src="src/android/ExoPlayerService.java"  target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
+        <source-file src="src/android/UriResolver.java"       target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
+
+        <resource-file src="src/android/res/raw/exoplayer_silent.mp3" target="res/raw/exoplayer_silent.mp3"/>
+        <resource-file src="src/android/res/values/strings.xml"        target="res/values/exoplayer_strings.xml"/>
+
+        <!-- AndroidX Media3 1.4.1 — released stable line.
+             DefaultExtractorsFactory in media3-exoplayer covers MP3 + WAV used by
+             FlanerieAudioMap parcours (Frappaz / Dumas / Elysée instrumentals). -->
+        <framework src="androidx.media3:media3-exoplayer:1.4.1" />
+        <framework src="androidx.media3:media3-session:1.4.1" />
+        <framework src="androidx.media3:media3-common:1.4.1" />
+        <framework src="androidx.media3:media3-datasource:1.4.1" />
+    </platform>
+
+</plugin>
