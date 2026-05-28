@@ -213,7 +213,10 @@ public class ExoPlayerPlugin extends CordovaPlugin {
                 return true;
             }
             case "getPosition":
-                runOnMain(() -> cb.success((float) inst.getPosition()));
+                // CallbackContext.success() has no float overload — pipe the
+                // position through a PluginResult(Status, float) directly.
+                runOnMain(() -> cb.sendPluginResult(
+                        new PluginResult(PluginResult.Status.OK, (float) inst.getPosition())));
                 return true;
             case "setVolume": {
                 final double v;

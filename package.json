@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-exoplayer-simple",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cordova plugin: AndroidX Media3 (ExoPlayer) wrapper with a Howler-compatible JS surface, hosted in a MediaSessionService for background-reliable playback. Android only.",
   "cordova": {
     "id": "cordova-plugin-exoplayer-simple",
