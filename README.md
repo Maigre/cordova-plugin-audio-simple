@@ -3,7 +3,7 @@
 Unified background-reliable audio surface for Cordova. Howler-compatible JS API across Android and iOS.
 
 - **Android:** AndroidX Media3 (ExoPlayer 1.4.x) hosted in a `MediaSessionService` foreground service.
-- **iOS:** AVAudioPlayer pool with AVAudioSession lifecycle, MPNowPlayingInfo (lock-screen tile with all controls disabled), and an NSUserDefaults step-state cache. *Added in Round 25 — see ios-native-plan §2 Workstream I.*
+- **iOS:** AVAudioPlayer pool with AVAudioSession lifecycle, MPNowPlayingInfo (lock-screen tile with all controls disabled), and an NSUserDefaults step-state cache. *Added in Round 25 — see mobile-audit §iOS native plan settled-design-decisions.*
 
 Renamed from `cordova-plugin-exoplayer-simple` in Round 24 of the Flanerie iOS native plan; Android implementation is bytes-identical aside from the renamed top-level plugin class (`AudioSimplePlugin`).
 

@@ -1,8 +1,9 @@
 // cordova-plugin-audio-simple — JS shim.
 //
-// Renamed from cordova-plugin-exoplayer-simple in Round 24 (ios-native-plan §2
-// Workstream I). Android implementation is unchanged (AndroidX Media3 / ExoPlayer
-// inside a MediaSessionService FG). iOS implementation lands in Round 25.
+// Renamed from cordova-plugin-exoplayer-simple in Round 24 (Workstream I.A in
+// mobile-audit.md). Android implementation is unchanged (AndroidX Media3 /
+// ExoPlayer inside a MediaSessionService FG). iOS implementation landed in
+// Round 25 (Workstream I.B).
 //
 // Exposes:
 //   cordova.plugins.audio.Player(src, opts)  — per-instance Howler-compat wrapper
@@ -379,7 +380,7 @@ function startService(success, error) {
     exec(success || function(){}, error || function(){}, SERVICE, 'startService', []);
 }
 
-// ---------- iOS-only surface (added in Round 25, ios-native-plan §2 I.B) ----
+// ---------- iOS-only surface (added in Round 25, Workstream I.B) ------------
 //
 // All methods below succeed on iOS and errback on Android (action not
 // registered). The webapp gates calls on PLATFORM === 'ios'. They were

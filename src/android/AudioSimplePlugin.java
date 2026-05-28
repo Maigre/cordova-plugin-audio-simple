@@ -262,7 +262,7 @@ public class AudioSimplePlugin extends CordovaPlugin {
         try {
             JSONObject info = new JSONObject();
             info.put("plugin", "cordova-plugin-audio-simple");
-            info.put("version", "0.2.0");
+            info.put("version", "0.3.0");
             info.put("media3", "1.4.1");
             cb.success(info);
         } catch (JSONException e) {
@@ -284,9 +284,20 @@ public class AudioSimplePlugin extends CordovaPlugin {
     }
 
     private boolean doReleaseAll(CallbackContext cb) {
-        releaseAllInternal();
-        stopServiceIfStarted();
-        cb.success();
+        // ExoPlayer must be released from its construction thread (main looper).
+        // Chain stopService + cb.success() inside the same runnable so the JS
+        // `await` on releaseAll() only resolves after every player has actually
+        // been released — the rearm A3 / walk-end A1 teardown ordering with
+        // releaseAudiofocusSession depends on this.
+        runOnMain(() -> {
+            for (int i = 0; i < players.size(); i++) {
+                ExoPlayerInstance inst = players.valueAt(i);
+                if (inst != null) inst.release();
+            }
+            players.clear();
+            stopServiceIfStarted();
+            cb.success();
+        });
         return true;
     }
 

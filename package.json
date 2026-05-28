@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-audio-simple",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Cordova plugin: unified background-reliable audio surface. Android: AndroidX Media3 (ExoPlayer) MediaSessionService. iOS: AVAudioPlayer pool with AVAudioSession lifecycle, MPNowPlayingInfo, and NSUserDefaults step-state cache. Howler-compatible JS API.",
   "cordova": {
     "id": "cordova-plugin-audio-simple",
