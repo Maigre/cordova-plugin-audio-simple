@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * cordova-plugin-exoplayer-simple — bridge entry point.
+ * cordova-plugin-audio-simple — Android bridge entry point.
  *
  * Owns the per-player SparseArray and the single long-lived "events" callback
  * context. ExoPlayerInstance objects post events back via {@link #emit}.
@@ -26,12 +26,12 @@ import java.lang.reflect.Proxy;
  * Coexists with cordova-plugin-audiofocus: audio focus is requested by that
  * plugin; this one only observes focus changes (Phase 3 of the rollout).
  */
-public class ExoPlayerPlugin extends CordovaPlugin {
+public class AudioSimplePlugin extends CordovaPlugin {
 
     // Static reference so the MediaSessionService can find the active plugin
     // instance (mirrors the AudioFocus.instance pattern used for AF-3 service
     // restart). Null when no Cordova activity is bound.
-    static ExoPlayerPlugin instance = null;
+    static AudioSimplePlugin instance = null;
 
     private final SparseArray<ExoPlayerInstance> players = new SparseArray<>();
     private int nextHandle = 1;
@@ -261,8 +261,8 @@ public class ExoPlayerPlugin extends CordovaPlugin {
     private boolean doPing(CallbackContext cb) {
         try {
             JSONObject info = new JSONObject();
-            info.put("plugin", "cordova-plugin-exoplayer-simple");
-            info.put("version", "0.1.0");
+            info.put("plugin", "cordova-plugin-audio-simple");
+            info.put("version", "0.2.0");
             info.put("media3", "1.4.1");
             cb.success(info);
         } catch (JSONException e) {

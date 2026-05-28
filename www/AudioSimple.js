@@ -1,9 +1,13 @@
-// cordova-plugin-exoplayer-simple — JS shim.
+// cordova-plugin-audio-simple — JS shim.
+//
+// Renamed from cordova-plugin-exoplayer-simple in Round 24 (ios-native-plan §2
+// Workstream I). Android implementation is unchanged (AndroidX Media3 / ExoPlayer
+// inside a MediaSessionService FG). iOS implementation lands in Round 25.
 //
 // Exposes:
-//   cordova.plugins.exoplayer.Player(src, opts)  — per-instance Howler-compat wrapper
-//   cordova.plugins.exoplayer.releaseAll(ok, ko) — walk-end teardown (A1, A3)
-//   cordova.plugins.exoplayer.ping(ok, ko)       — sanity check
+//   cordova.plugins.audio.Player(src, opts)  — per-instance Howler-compat wrapper
+//   cordova.plugins.audio.releaseAll(ok, ko) — walk-end teardown (A1, A3)
+//   cordova.plugins.audio.ping(ok, ko)       — sanity check
 //
 // API mirrors the Howler subset used by FlanerieAudioMap's PlayerSimple
 // (state / playing / paused / play / pause / stop / seek / volume / fade /
@@ -11,7 +15,7 @@
 
 var exec = require('cordova/exec');
 
-var SERVICE = 'ExoPlayer';
+var SERVICE = 'AudioSimple';
 
 // Native bridge actions
 var ACTION_CREATE      = 'create';
@@ -42,10 +46,11 @@ function _ensureEventsSubscribed() {
 }
 
 function _onEventStreamError(err) {
-    // The plugin is Android-only. On iOS or browser this exec() simply errors
-    // back and we leave the stream un-subscribed — no further attempts.
+    // Android: native MediaSessionService streams events back through this
+    // subscription. iOS (added in Round 25) does the same via its own
+    // AudioSimplePlayer event channel. Browser leaves the stream un-subscribed.
     _eventsSubscribed = false;
-    if (typeof console !== 'undefined') console.warn('[ExoPlayer] event stream unavailable:', err);
+    if (typeof console !== 'undefined') console.warn('[AudioSimple] event stream unavailable:', err);
 }
 
 function _dispatchEvent(evt) {
@@ -104,7 +109,7 @@ function _dispatchEvent(evt) {
             if (name === 'loaderror' || name === 'playerror') snapshot[i](0, evt.error || null);
             else snapshot[i](p._src);
         } catch (e) {
-            if (typeof console !== 'undefined') console.error('[ExoPlayer] listener error:', name, e);
+            if (typeof console !== 'undefined') console.error('[AudioSimple] listener error:', name, e);
         }
     }
 }

@@ -1,24 +1,29 @@
-# cordova-plugin-exoplayer-simple
+# cordova-plugin-audio-simple
 
-Cordova plugin wrapping AndroidX Media3 (ExoPlayer 1.4.x) with a Howler-compatible JS API surface. Android only — iOS keeps using `cordova-plugin-media` (the existing `NativeMediaPlayer` wrapper in FlanerieAudioMap).
+Unified background-reliable audio surface for Cordova. Howler-compatible JS API across Android and iOS.
+
+- **Android:** AndroidX Media3 (ExoPlayer 1.4.x) hosted in a `MediaSessionService` foreground service.
+- **iOS:** AVAudioPlayer pool with AVAudioSession lifecycle, MPNowPlayingInfo (lock-screen tile with all controls disabled), and an NSUserDefaults step-state cache. *Added in Round 25 — see ios-native-plan §2 Workstream I.*
+
+Renamed from `cordova-plugin-exoplayer-simple` in Round 24 of the Flanerie iOS native plan; Android implementation is bytes-identical aside from the renamed top-level plugin class (`AudioSimplePlugin`).
 
 ## Why
 
-Replaces Howler.js on Android in the Flanerie field-test fleet. Howler runs inside the WebView and is fragile under Doze, App Standby, and OEM aggressive memory pressure. ExoPlayer runs natively, hosted in a `MediaSessionService` foreground service, and survives screen lock + GPS-callback-triggered playback reliably.
+Replaces Howler.js on Android (fragile under Doze / App Standby / OEM aggressive memory pressure) and replaces `cordova-plugin-media` on iOS (per-file `AVAudioPlayer` reallocation churn + AVAudioSession reactivation under each play).
 
 ## Coexistence with `cordova-plugin-audiofocus`
 
 The two plugins are deliberately kept independent for rollback safety:
 
-- **audiofocus plugin** — owns `AudioManager.requestAudioFocus`, its own `AudioFocusService` foreground notification (ID 7374), and `ACTION_POWER_SAVE_MODE_CHANGED`.
-- **exoplayer plugin (this)** — owns ExoPlayer instances, `MediaSessionService` foreground notification (ID 7375), and registers its own `OnAudioFocusChangeListener` on the same `AudioManager` so it can pause/duck natively without a JS roundtrip.
+- **audiofocus plugin** — owns `AudioManager.requestAudioFocus` (Android), its own `AudioFocusService` foreground notification (ID 7374), and `ACTION_POWER_SAVE_MODE_CHANGED`. iOS surface shrunk in Round 25 to telemetry-only interruption observer (AVAudioSession lifecycle moved here).
+- **audio-simple plugin (this)** — owns the actual playback engines (ExoPlayer + AVAudioPlayer), its own `MediaSessionService` foreground notification (ID 7375 — Android), and AVAudioSession lifecycle + MPNowPlayingInfo + step-state cache (iOS).
 
-`AudioAttributes.handleAudioFocus = false` on every ExoPlayer instance — audiofocus stays single-source-of-truth for the focus *request*.
+`AudioAttributes.handleAudioFocus = false` on every Android ExoPlayer instance — audiofocus stays single-source-of-truth for the focus *request* on Android.
 
 ## JS API (Howler-compatible subset)
 
 ```js
-var p = new cordova.plugins.exoplayer.Player(src, { loop: false });
+var p = new cordova.plugins.audio.Player(src, { loop: false });
 p.on('load',       function() { ... });
 p.on('play',       function() { ... });
 p.on('pause',      function() { ... });
@@ -35,7 +40,7 @@ var pos = p.seek();         // getter
 p.volume(0.5);
 p.fade(0, 1, 1500);
 p.loop(true);
-p.prewarm();                // setMediaItem + prepare, no playWhenReady
+p.prewarm();                // prepare without playWhenReady — closes M4/P9 cold-load race
 p.unload();
 
 p.state();                  // 'unloaded' | 'loading' | 'loaded'
@@ -47,12 +52,24 @@ p._src;                     // resolved file:// or http://localhost URI
 Plugin-level:
 
 ```js
-cordova.plugins.exoplayer.releaseAll(success, error);  // walk-end teardown
-cordova.plugins.exoplayer.ping(success, error);        // sanity check
+cordova.plugins.audio.releaseAll(success, error);   // walk-end teardown
+cordova.plugins.audio.startService(success, error); // Android FG service warm-up
+cordova.plugins.audio.ping(success, error);         // sanity check
+```
+
+iOS-only methods (added in Round 25):
+
+```js
+cordova.plugins.audio.setupNowPlaying({ title, artist, albumTitle });
+cordova.plugins.audio.clearNowPlaying();
+cordova.plugins.audio.setResumeSnapshot({ stepId, seekPosSec, pID });
+cordova.plugins.audio.getResumeSnapshot();   // → Promise<{found, stepId, seekPosSec, pID, savedAtMs, ageMs}>
+cordova.plugins.audio.clearResumeSnapshot();
 ```
 
 ## Native dependencies
 
+**Android:**
 - `androidx.media3:media3-exoplayer:1.4.1`
 - `androidx.media3:media3-session:1.4.1`
 - `androidx.media3:media3-common:1.4.1`
@@ -60,6 +77,11 @@ cordova.plugins.exoplayer.ping(success, error);        // sanity check
 
 `DefaultExtractorsFactory` covers MP3 and WAV — sufficient for the Flanerie media set.
 
+**iOS:**
+- `AVFoundation.framework` (AVAudioPlayer + AVAudioSession)
+- `MediaPlayer.framework` (MPNowPlayingInfoCenter + MPRemoteCommandCenter)
+
 ## Min SDK
 
-21 (Media3 baseline). FlanerieCordova currently targets minSdk 24 / targetSdk 36.
+- Android 21 (Media3 baseline). FlanerieCordova currently targets minSdk 24 / targetSdk 36.
+- iOS 13 (AVAudioSession route-change keys baseline).

@@ -20,9 +20,9 @@ import org.json.JSONObject;
  * One ExoPlayer wrapped behind a Howler-shaped JS API.
  *
  * Lifecycle:
- *   - Constructed on the main looper from ExoPlayerPlugin.doCreate().
+ *   - Constructed on the main looper from AudioSimplePlugin.doCreate().
  *   - Receives action calls (load, play, pause, stop, seek, ...) marshalled to
- *     the main looper by ExoPlayerPlugin.
+ *     the main looper by AudioSimplePlugin.
  *   - Emits JS-facing events via plugin.emit({id, event, ...}). One callback
  *     stream is shared by all players; the JS side fans events out to per-
  *     instance listeners by matching the handle id.
@@ -47,7 +47,7 @@ import org.json.JSONObject;
 class ExoPlayerInstance {
 
     final int handle;
-    private final ExoPlayerPlugin plugin;
+    private final AudioSimplePlugin plugin;
     private final Context appContext;
 
     private ExoPlayer player;
@@ -65,7 +65,7 @@ class ExoPlayerInstance {
     private int fadeToken = 0;
     private static final int FADE_STEP_MS = 50;
 
-    ExoPlayerInstance(int handle, ExoPlayerPlugin plugin, Context appContext,
+    ExoPlayerInstance(int handle, AudioSimplePlugin plugin, Context appContext,
                       String initialSrc, boolean loop, float volume) {
         this.handle = handle;
         this.plugin = plugin;
@@ -87,7 +87,7 @@ class ExoPlayerInstance {
         player = new ExoPlayer.Builder(appContext)
                 // handleAudioFocus = false — audiofocus plugin owns the focus
                 // request. This wrapper observes focus changes via a separate
-                // listener registered by ExoPlayerPlugin (Step 6).
+                // listener registered by AudioSimplePlugin (Step 6).
                 .setAudioAttributes(attrs, false)
                 .setWakeMode(C.WAKE_MODE_LOCAL)
                 .build();

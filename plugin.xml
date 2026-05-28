@@ -1,21 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-exoplayer-simple" version="0.1.2"
+<plugin id="cordova-plugin-audio-simple" version="0.2.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <name>ExoPlayerSimple</name>
-    <description>AndroidX Media3 (ExoPlayer) wrapper with a Howler-compatible JS API surface, hosted in a MediaSessionService for background-reliable playback on Android.</description>
+    <name>AudioSimple</name>
+    <description>Unified background-reliable audio surface. Android: AndroidX Media3 (ExoPlayer) MediaSessionService. iOS: AVAudioPlayer pool with AVAudioSession lifecycle, MPNowPlayingInfo, and NSUserDefaults step-state cache. Howler-compatible JS API.</description>
     <author email="thomas@37m.gr" href="https://github.com/Maigre">maigre</author>
     <license>MIT</license>
 
-    <js-module name="ExoPlayerSimple" src="www/ExoPlayerSimple.js">
-        <clobbers target="cordova.plugins.exoplayer"/>
+    <js-module name="AudioSimple" src="www/AudioSimple.js">
+        <clobbers target="cordova.plugins.audio"/>
     </js-module>
 
     <platform name="android">
         <config-file parent="/*" target="res/xml/config.xml">
-            <feature name="ExoPlayer">
-                <param name="android-package" value="com.maigre.cordova.plugins.exoplayer.ExoPlayerPlugin"/>
+            <feature name="AudioSimple">
+                <param name="android-package" value="com.maigre.cordova.plugins.exoplayer.AudioSimplePlugin"/>
             </feature>
         </config-file>
 
@@ -24,7 +24,7 @@
              Android 14 (API 34). FOREGROUND_SERVICE is required since API 28.
              Coexists with cordova-plugin-audiofocus's AudioFocusService — both run as
              FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK with distinct notification IDs
-             (audiofocus: 7374, exoplayer: 7375). -->
+             (audiofocus: 7374, audio-simple: 7375). -->
         <config-file parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -42,7 +42,10 @@
             </service>
         </config-file>
 
-        <source-file src="src/android/ExoPlayerPlugin.java"  target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
+        <!-- Android Java package retains the .exoplayer.* namespace because
+             that is literally the underlying media library on Android; only
+             the Cordova-facing plugin class is renamed to AudioSimplePlugin. -->
+        <source-file src="src/android/AudioSimplePlugin.java" target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
         <source-file src="src/android/ExoPlayerInstance.java" target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
         <source-file src="src/android/ExoPlayerService.java"  target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
         <source-file src="src/android/UriResolver.java"       target-dir="src/com/maigre/cordova/plugins/exoplayer/"/>
@@ -58,5 +61,7 @@
         <framework src="androidx.media3:media3-common:1.4.1" />
         <framework src="androidx.media3:media3-datasource:1.4.1" />
     </platform>
+
+    <!-- iOS implementation added in Round 25 (ios-native-plan §2 Workstream I). -->
 
 </plugin>

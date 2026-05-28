@@ -210,12 +210,12 @@ public class ExoPlayerService extends MediaSessionService {
         }
     }
 
-    // ---------- helpers invoked from ExoPlayerPlugin ----------
+    // ---------- helpers invoked from AudioSimplePlugin ----------
 
     /**
      * Returns the persistent silent player so the plugin's per-instance code
      * can share its rendering pipeline if needed in future. Public so
-     * ExoPlayerPlugin (same package) can reach it; do not expose elsewhere.
+     * AudioSimplePlugin (same package) can reach it; do not expose elsewhere.
      */
     @Nullable
     ExoPlayer getSilentPlayer() { return silentPlayer; }
