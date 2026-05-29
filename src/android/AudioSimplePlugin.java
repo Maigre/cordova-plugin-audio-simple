@@ -262,7 +262,7 @@ public class AudioSimplePlugin extends CordovaPlugin {
         try {
             JSONObject info = new JSONObject();
             info.put("plugin", "cordova-plugin-audio-simple");
-            info.put("version", "0.3.1");
+            info.put("version", "0.3.3");
             info.put("media3", "1.4.1");
             cb.success(info);
         } catch (JSONException e) {

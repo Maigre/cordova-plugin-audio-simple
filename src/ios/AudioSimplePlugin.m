@@ -154,7 +154,7 @@
 - (void) ping:(CDVInvokedUrlCommand*)command {
     NSDictionary* info = @{
         @"plugin":   @"cordova-plugin-audio-simple",
-        @"version":  @"0.3.1",
+        @"version":  @"0.3.3",
         @"platform": @"ios",
         @"engine":   @"AVAudioPlayer",
     };
